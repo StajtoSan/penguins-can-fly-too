@@ -5,6 +5,8 @@ using UnityEngine.InputSystem;
 
 public class Cannon : MonoBehaviour
 {
+    [SerializeField] public float velocity;
+    [SerializeField] public float mass;
     public static Cannon instance;
     private float debugTimer = 3;
     public GameObject cannonBarrel;

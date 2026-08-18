@@ -1,12 +1,14 @@
 using UnityEngine;
-
+using Unity.Mathematics;
 public class TargetLine : MonoBehaviour
 {
+    public float width = 1.0f;
+    public int positionCount;
     private float force;
     private float mass;
-
     private float cannonAngle;
-    public float width = 1.0f;
+    private float velocity;
+
 
     private LineRenderer lr;
 
@@ -23,8 +25,8 @@ public class TargetLine : MonoBehaviour
     void Update()
     {
         // setting variables to calculate flight trajectory
-        force = GetComponent<Penguin>().velocity;
-        mass = GetComponent<Penguin>().mass;
+        force = Cannon.instance.velocity;
+        mass = Cannon.instance.mass;
         cannonAngle = Cannon.instance.cannonBarrel.transform.rotation.z;
         /*
          * **** useful phisics formulas ****
@@ -36,16 +38,28 @@ public class TargetLine : MonoBehaviour
          * Placement in y axis
          *      y = (v*sin(a)*t)-(0.5*g*t^2)
          */
+        velocity = (force * 0.01f) / mass;
 
         startingPoint.x = Cannon.instance.cannonBarrelExit.transform.position.x;
         startingPoint.y = Cannon.instance.cannonBarrelExit.transform.position.y;
 
-        //this I may make with for loop
-        Vector3[] positions = new Vector3[3];
-        positions[0] = new Vector3(startingPoint.x, startingPoint.y, 0.0f);
-        positions[1] = new Vector3(0.0f, 2.0f, 0.0f);
-        positions[2] = new Vector3(2.0f, -2.0f, 0.0f);
-        lr.positionCount = positions.Length;
+        //this stiil is not working - needs adjustment
+        Vector3[] positions = new Vector3[positionCount];
+        positions[0] = startingPoint;
+        for (int i = 1; i < positionCount; i++)
+        {
+            //calculating x position in time 
+            float positionX = velocity * (Mathf.Cos(cannonAngle)) * i/3f;
+            //calculating y position in time
+            float positionY = (velocity * (Mathf.Sin(cannonAngle)) * i/3f)-(0.5f* (Physics.gravity.y) * math.pow((i/3f),2));
+            Vector3 position = new(positionX, positionY, 0.0f);
+            Debug.Log("X " +  positionX);
+            Debug.Log("Y " + positionY);
+            positions[i] = position;
+
+        }
+
+       
         lr.SetPositions(positions);
         AnimationCurve curve = new AnimationCurve();
 

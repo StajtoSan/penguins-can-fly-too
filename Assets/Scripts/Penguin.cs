@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class Penguin : MonoBehaviour
 {
-    [SerializeField] public float velocity;
-    [SerializeField] public float mass;
+    private float velocity;
+    private float mass;
 
 
     public Rigidbody2D theRB;
@@ -16,7 +16,8 @@ public class Penguin : MonoBehaviour
     }
     private void OnEnable()
     {
-        mass = 10f;
+        velocity = Cannon.instance.velocity;
+        mass = Cannon.instance.mass;
         theRB.mass = mass;
 
         Fly();
@@ -25,7 +26,8 @@ public class Penguin : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
+
     }
     public void Fly()
     {
