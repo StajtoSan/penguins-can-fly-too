@@ -5,6 +5,8 @@ using UnityEngine.InputSystem;
 
 public class Cannon : MonoBehaviour
 {
+    public static Cannon instance;
+    private float debugTimer = 3;
     public GameObject cannonBarrel;
     public GameObject cannonBarrelExit;
     public GameObject penguin; 
@@ -15,23 +17,32 @@ public class Cannon : MonoBehaviour
 
     private Camera mainCam;
     public InputActionReference fire;
-    private float debugTimer=3;
+
+
+    private bool mashineGunMode;
     void Start()
     {
         mainCam = Camera.main;
     }
     private void OnEnable()
     {
+        instance = this;
         fire.action.started += Fire;
+
     }
+
+
+
     private void OnDisable()
     {
         fire.action.started -= Fire;
+
     }
     private void Fire(InputAction.CallbackContext context)
     {
-        Instantiate(penguin, cannonBarrelExit.transform.position, cannonBarrelExit.transform.rotation);
+        Instantiate(penguin, cannonBarrelExit.transform.position, (cannonBarrel.transform.rotation));
     }
+
 
     void Update()
     {
@@ -44,10 +55,14 @@ public class Cannon : MonoBehaviour
 
         if (debugTimer <= 0)
         {
-            DebuggingLog();
+            //DebuggingLog();
             debugTimer = 3;
         }
         debugTimer -= Time.deltaTime;
+        while (mashineGunMode)
+        {
+            Instantiate(penguin, cannonBarrelExit.transform.position, (cannonBarrel.transform.rotation));
+        }
 
     }
     public void DebuggingLog()
