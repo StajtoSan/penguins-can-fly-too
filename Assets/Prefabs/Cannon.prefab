@@ -140,8 +140,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Cannon
   cannonBarrel: {fileID: 1019339572186775708}
-  cannonBarrelExit: {fileID: 0}
-  penguin: {fileID: 0}
+  cannonBarrelExit: {fileID: 5136881760146748252}
+  penguin: {fileID: 991019094597875210, guid: f2186d9bd4f18ba4f83dec0f405e43f5, type: 3}
+  lineRender: {fileID: 9189738802945274639, guid: fb010c2e1bc81c240b53bf682b9213fb, type: 3}
+  velocity: 100
+  mass: 10
   mousePosition: {x: 0, y: 0, z: 0}
   fire: {fileID: -7154586526561302485, guid: 0a4dab212ab2c104387eb2c846c79d30, type: 3}
 --- !u!114 &7495845991943253548

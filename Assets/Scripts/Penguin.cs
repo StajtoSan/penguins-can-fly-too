@@ -2,18 +2,13 @@ using UnityEngine;
 
 public class Penguin : MonoBehaviour
 {
+    [SerializeField] GameObject body;
     private float velocity;
     private float mass;
 
 
     public Rigidbody2D theRB;
-    private Vector3 flyDirection;
-    private Vector3 flySource;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-      
-    }
+
     private void OnEnable()
     {
         velocity = Cannon.instance.velocity;
@@ -23,17 +18,18 @@ public class Penguin : MonoBehaviour
         Fly();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-
-    }
+    private Vector3 flyDirection;
+    private Vector3 flySource;
     public void Fly()
     {
         flySource = Cannon.instance.transform.position;
         flyDirection = transform.position - flySource;
         theRB.AddForce(flyDirection * velocity, ForceMode2D.Impulse);
+
+        for (int i = 0; i < 4; i++)
+        {
+
+        }
     }
 
 }

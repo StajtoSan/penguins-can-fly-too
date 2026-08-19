@@ -1,69 +1,61 @@
 using UnityEngine;
 using Unity.Mathematics;
+using UnityEngine.SceneManagement;
 public class TargetLine : MonoBehaviour
 {
-    public float width = 1.0f;
-    public int positionCount;
-    private float force;
-    private float mass;
-    private float cannonAngle;
-    private float velocity;
-
-
+    public static TargetLine instance;
+    [SerializeField] private int simulatedViews;
+    [SerializeField] private float width;
     private LineRenderer lr;
+    private Scene simulatedScene;
+    private PhysicsScene2D phisicsScene;
 
-    private Vector3 startingPoint;
+    public Transform indestructibleObjects;
 
-    void Start()
+
+
+    private void Start()
     {
+        instance = this;
         lr = GetComponent<LineRenderer>();
         lr.material = new Material(Shader.Find("Sprites/Default"));
-        Debug.Log(Physics2D.gravity);
+        PhiciscSimulationSceneCreator();
+    }
+    private void Update()
+    {
 
     }
-    // Update is called once per frame
-    void Update()
+    void PhiciscSimulationSceneCreator()
     {
-        // setting variables to calculate flight trajectory
-        force = Cannon.instance.velocity;
-        mass = Cannon.instance.mass;
-        cannonAngle = Cannon.instance.cannonBarrel.transform.rotation.z;
-        /*
-         * **** useful phisics formulas ****
-         * 
-         * Fly speed
-         *      v = (F*t)/m
-         * Placement in x axis
-         *      x = v*cos(a)*t
-         * Placement in y axis
-         *      y = (v*sin(a)*t)-(0.5*g*t^2)
-         */
-        velocity = (force * 0.01f) / mass;
+        simulatedScene = SceneManager.CreateScene("SimuScene", new CreateSceneParameters(LocalPhysicsMode.Physics2D));
+        phisicsScene = simulatedScene.GetPhysicsScene2D();
 
-        startingPoint.x = Cannon.instance.cannonBarrelExit.transform.position.x;
-        startingPoint.y = Cannon.instance.cannonBarrelExit.transform.position.y;
-
-        //this stiil is not working - needs adjustment
-        Vector3[] positions = new Vector3[positionCount];
-        positions[0] = startingPoint;
-        for (int i = 1; i < positionCount; i++)
+        foreach (Transform obsticle in indestructibleObjects)
         {
-            //calculating x position in time 
-            float positionX = velocity * (Mathf.Cos(cannonAngle)) * i/3f;
-            //calculating y position in time
-            float positionY = (velocity * (Mathf.Sin(cannonAngle)) * i/3f)-(0.5f* (Physics.gravity.y) * math.pow((i/3f),2));
-            Vector3 position = new(positionX, positionY, 0.0f);
-            Debug.Log("X " +  positionX);
-            Debug.Log("Y " + positionY);
-            positions[i] = position;
-
+            var tempObsticle = Instantiate(obsticle.gameObject, obsticle.position, obsticle.rotation);
+            tempObsticle.GetComponent<Renderer>().enabled = false;
+            SceneManager.MoveGameObjectToScene(tempObsticle, simulatedScene);
         }
 
-       
-        lr.SetPositions(positions);
-        AnimationCurve curve = new AnimationCurve();
 
-
-        lr.widthMultiplier = width;
     }
+    public void PhisicsSimulation(GameObject body, Vector3 positoin, Transform barrel)
+    {
+        var tempObject = Instantiate(body.gameObject, positoin, barrel.transform.rotation);
+        SceneManager.MoveGameObjectToScene(tempObject.gameObject, simulatedScene);
+
+        lr.positionCount = simulatedViews;
+
+        for (var i = 0; i < simulatedViews; i++)
+        {
+            phisicsScene.Simulate(Time.fixedDeltaTime*3);
+            lr.SetPosition(i, tempObject.transform.position);
+        }
+        lr.widthMultiplier = width;
+        Destroy(tempObject.gameObject);
+    }
+
+
 }
+
+

@@ -106,8 +106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9f574a70fd27874b9255127cd5abc87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Penguin
-  velocity: 4000
-  mass: 10
+  body: {fileID: 991019094597875210}
   theRB: {fileID: 9223301413674305694}
 --- !u!50 &9223301413674305694
 Rigidbody2D:
